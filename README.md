@@ -1,6 +1,7 @@
 # StockBackEnd
+## Require
+python 3.7
 ## Quick setup
-Require
 Install flask and requests
 ```
 pip install flask
