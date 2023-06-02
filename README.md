@@ -1,5 +1,6 @@
 # StockBackEnd
 ## Quick setup
+Require
 Install flask and requests
 ```
 pip install flask
