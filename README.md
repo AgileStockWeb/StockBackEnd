@@ -1,10 +1,13 @@
 # StockBackEnd
+## Require
+python 3.7
 ## Quick setup
-Install npm and apollo server
+Install flask and requests
 ```
-npm insatll
+pip install flask
+pip install requests
 ```
 Run
 ```
-nodemon .\server.js
+flask run
 ```
