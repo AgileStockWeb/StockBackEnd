@@ -2,8 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,visualstudiocode,windows,python
 
 ## Mode ###
-model/
-jpg/
+model/*
+jpg/*
 
 ### macOS ###
 # General
