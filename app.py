@@ -1,6 +1,10 @@
 from flask import Flask, request, jsonify
+from modeldb import *
+from resultDB import *
+from model import *
 import requests
 import uuid
+import json
 
 app = Flask(__name__)
 
@@ -10,62 +14,88 @@ def user_input():
         user_input = request.get_json()
 
         # 在 user_input 中加入唯一的 UUID
-        user_input['uuid'] = str(uuid.uuid4())
+        user_input['model_id'] = str(uuid.uuid4())
 
-        # 送要訓練的資料給 db
-        database_api_url = 'database URL'  # 替換為資料庫URL
-        database_response = requests.post(database_api_url, json=user_input)
+        # 將資料傳給model  
+        model = StockPrediction()
+        model.input_data(user_input['stock_code'],
+                         user_input['start_time'],
+                         user_input['end_time'],
+                         )
+        model.choose_normalization(user_input['data_clean'])
+        model.choose_model(user_input['model_type'])
+        train_model_path = model.train_model(user_input['model_id'])
 
-        if database_response.status_code == 200:
-            # 送要訓練的資料給 model
-            model_api_url = 'model URL'  # 替換為model URL
-            model_response = requests.post(model_api_url, json=user_input)
+        # 印出model估計值
+        # model.estimate()
 
-            # 根據另一個 API 的回應進行處理
-            if model_response.status_code == 200:
-                return jsonify({'message': 'success'})
-            else:
-                return jsonify({'message': 'Error in send user-input to db.'})
-        else:
-            return jsonify({'message': 'Error in send user-input to database.'})
+        user_input['model_path'] = train_model_path
 
-    except Exception as e:
-        print(e)
-        return jsonify({'message': 'Invalid JSON data.'})
-
-@app.route("/api/uaer/training_model", methods=["POST"])
-def model_output():
-    try:
-        model_output = request.get_json()
-        # 送訓練好的資料回 db
-        database_api_url = 'database URL'  # 替換為資料庫URL
-        database_response = requests.post(database_api_url, json=model_output)
-
-        if database_response.status_code == 200:
-            return jsonify({'message': 'success'})
-        else:
-            return jsonify({'message': 'Error in send model-output to db.'})
+        # dict 轉 json
+        user_input = json.dumps(user_input)
         
-    except Exception as e:
-        print(e)
-        return jsonify({'message': 'Invalid JSON data.'})
-
-@app.route("/api/user/pretrain_model", methods=["POST"])
-def user_pretrain_model():
-    try:
-        database_api_url = 'database URL'  # 替換為資料庫URL
-        response = requests.get(database_api_url)
-
-        if response.status_code == 200:
-            database_content = response.json()
-            return jsonify(database_content)
-        else:
-            return jsonify({'message': 'Error in request db to UI.'})
+        # 使用資料庫格式並連線
+        model_sql = TrainingDataDB(host="127.0.0.1", database="stock_website_database", user="postgres", password="0000")
         
+        # 將資料寫入資料庫
+        model_sql.get_build_model(json_string=user_input)
+
+        return jsonify({"status": "success"}), 200
+    
     except Exception as e:
         print(e)
         return jsonify({'message': 'Invalid JSON data.'})
 
+@app.route("/api/user/show_pretrain_model", methods=["POST"])
+def show_pretrain_model():
+    try:
+        # 使用資料庫格式並連線
+        model_sql = TrainingDataDB(host="127.0.0.1", database="stock_website_database", user="postgres", password="0000")
+        
+        # 從資料庫讀取已訓練的模型資料
+        pretrain_model_content = model_sql.get_page_data()
+
+        return jsonify(pretrain_model_content)
+    
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Invalid JSON data.'})
+    
+@app.route("/api/user/use_pretrain_model", methods=["POST"])
+def use_pretrain_model():
+    try:
+        # 取得使用者點擊的 model_id
+        user_select = request.get_json()
+
+        # model回測
+        model = StockPrediction()
+        model.input_data(user_select['stock_code'],
+                         user_select['start_time'],
+                         user_select['end_time']
+                         )
+        jpg_path = model.pre(user_select['model_id'],
+                             user_select['data_clean']
+                             )
+
+        # 要回傳資料庫的json
+        result_json = {
+           "model_id": user_select['model_id'],
+           "img_path": jpg_path
+        }
+
+        print(result_json)
+        
+        # 使用資料庫格式並連線
+        result_sql = ResultDB(host="127.0.0.1", database="stock_website_database", user="postgres", password="0000")
+        
+        # 將圖片路徑寫入資料庫
+        result_sql.set_result_table(result_json)
+
+        return jsonify(jpg_path)
+
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Invalid JSON data.'})
 
 if __name__ == '__main__':
     app.run()
