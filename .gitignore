@@ -1,6 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,windows,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,visualstudiocode,windows,python
 
+## Mode ###
+model/
+jpg/
+
 ### macOS ###
 # General
 .DS_Store
@@ -37,6 +41,7 @@ Temporary Items
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
+python/
 *.py[cod]
 *$py.class
 
