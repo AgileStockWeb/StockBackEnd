@@ -46,7 +46,7 @@ def user_input():
         print(e)
         return jsonify({'message': 'Invalid JSON data.'})
 
-@app.route("/api/user/show_pretrain_model", methods=["POST"])
+@app.route("/api/user/show/pretrain_model", methods=["POST"])
 def show_pretrain_model():
     try:
         # 使用資料庫格式並連線
@@ -61,19 +61,18 @@ def show_pretrain_model():
         print(e)
         return jsonify({'message': 'Invalid JSON data.'})
     
-@app.route("/api/user/use_pretrain_model", methods=["POST"])
-def use_pretrain_model():
+@app.route("/api/user/use/pretrain_model/img", methods=["POST"])
+def use_pretrain_model_img():
     try:
         # 取得使用者點擊的 model_id
         user_select = request.get_json()
 
         # model回測
         model = StockPrediction()
-        model.input_data(user_select['stock_code'],
-                         user_select['start_time'],
-                         user_select['end_time']
-                         )
         jpg_path = model.pre(user_select['model_id'],
+                             user_select['stock_code'],
+                             user_select['start_time'],
+                             user_select['end_time'],
                              user_select['data_clean']
                              )
 
@@ -96,6 +95,41 @@ def use_pretrain_model():
     except Exception as e:
         print(e)
         return jsonify({'message': 'Invalid JSON data.'})
+    
+@app.route("/api/user/use/pretrain_model/price", methods=["POST"])
+def use_pretrain_model_price():
+    try:
+        # 取得使用者點擊的 model_id
+        user_select = request.get_json()
+
+        # model回測
+        model = StockPrediction()
+        tomorrow_price = model.pre1(user_select['model_id'],
+                                    user_select['stock_code'],
+                                    user_select['data_clean']
+                                    )
+
+        # 要回傳資料庫的json
+        result_json = {
+           "model_id": user_select['model_id'],
+           "tomorrow_price": tomorrow_price
+        }
+
+        print(result_json)
+        
+        # 使用資料庫格式並連線
+        result_sql = ResultDB(host="127.0.0.1", database="stock_website_database", user="postgres", password="0000")
+        
+        # 將圖片路徑寫入資料庫
+        '''
+        寫入資料庫 function
+        '''
+        return jsonify(tomorrow_price)
+
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Invalid JSON data.'}) 
+
 
 if __name__ == '__main__':
     app.run()
