@@ -49,7 +49,8 @@ CREATE TABLE model_table (model_id TEXT PRIMARY KEY NOT NULL,
  TABEL2指令:
 CREATE TABLE result_table (result_id SERIAL PRIMARY KEY NOT NULL,
              			       jpg_path TEXT,
-               			     use_model TEXT REFERENCES model_table (model_id));
+				       tomorrow_price  float,
+               			     model_id TEXT REFERENCES model_table (model_id));
 ```
 有TABLE了
 
