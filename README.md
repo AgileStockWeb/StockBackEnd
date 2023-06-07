@@ -1,17 +1,34 @@
 # StockBackEnd
-## Require
-python 3.7
-### Quick setup Flask
-Install flask and requests
+## Require 
+- Python 3.7
+- Postgresql
+
+## Quick setup Flask
+Install python venv and python3.7
 ```bash
-pip3 install flask
-pip3 install requests
+sudo apt install python3.7 python3-venv python3.7-venv
+```
+Use venv
+```bash
+python3.7 -m venv py37-venv
+```
+Into venv
+```bash
+source py37-venv/bin/activate
+```
+Install Flask and requirement.txt
+```bash
+pip3 install -r requirements.txt
 ```
 Run
 ```bash
 flask run
 ```
-### Quick Setup Postgresql
+Exit venv
+```bash
+deactivate
+```
+## Quick Setup Postgresql
 DataBase前置安裝
 ```
 安裝POSTGRE:https://www.enterprisedb.com/downloads/postgres-postgresql-downloads   最上面那個15.3版  安裝時密碼預設0000
