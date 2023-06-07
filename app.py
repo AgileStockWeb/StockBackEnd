@@ -82,6 +82,9 @@ def use_pretrain_model_img():
            "img_path": jpg_path
         }
 
+        # dict 轉 json
+        result_json = json.dumps(result_json)
+
         print(result_json)
         
         # 使用資料庫格式並連線
@@ -115,15 +118,17 @@ def use_pretrain_model_price():
            "tomorrow_price": tomorrow_price
         }
 
+        # dict 轉 json
+        result_json = json.dumps(result_json)
+
         print(result_json)
         
         # 使用資料庫格式並連線
         result_sql = ResultDB(host="127.0.0.1", database="stock_website_database", user="postgres", password="0000")
         
         # 將圖片路徑寫入資料庫
-        '''
-        寫入資料庫 function
-        '''
+        result_sql.set_result_table_price(result_json)
+
         return jsonify(tomorrow_price)
 
     except Exception as e:
