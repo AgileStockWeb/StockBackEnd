@@ -2,11 +2,12 @@ from flask import Flask, request, jsonify
 from modeldb import *
 from resultDB import *
 from model import *
-import requests
+from flask_cors import CORS
 import uuid
 import json
 
 app = Flask(__name__)
+CORS(app, origins='http://localhost:5173')
 
 @app.route("/api/user/input", methods=["POST"])
 def user_input():
