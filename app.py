@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from modeldb import *
 from resultDB import *
 from model import *
@@ -56,6 +56,9 @@ def show_pretrain_model():
 
     return pretrain_model_content
  
+@app.route('/images/<path:filename>')
+def get_image(filename):
+    return send_from_directory('/Users/lujingyuan/Desktop/StockBackEnd/jpg', filename)
 
     
 @app.route("/api/user/use/pretrain_model/img", methods=["POST"])

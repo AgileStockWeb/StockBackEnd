@@ -8,6 +8,8 @@ import joblib
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import date, timedelta
+import matplotlib
+matplotlib.use( 'tkagg' )
 
 def adj_value(data):
     data['value']=data['close']/data['adjclose']
@@ -83,7 +85,7 @@ class StockPrediction:
             custom_ticks = pre.index
             custom_labels = [str(item)[:10] for item in pre.index]
             
-        plt.ylim(min(pre.min())-1,max(pre.max()+1))
+        plt.ylim(min(pre.min())-1,max(pre.max())+1)
         plt.xticks(custom_ticks, custom_labels)
         plt.plot(pre.index, pre['pre'], marker='.', markersize=3, mec='r', mfc='w',label=u'predict')
         plt.plot(pre.index, pre['trec'], marker='.', markersize=3,label=u'True')
@@ -91,7 +93,7 @@ class StockPrediction:
         plt.margins(0)
         plt.subplots_adjust(bottom=0.15)
         plt.savefig('jpg/'+i+'.jpg')
-        return 'jpg/'+i+'.jpg'
+        return i+'.jpg'
 
     def pre1(self,i, stock_code,method):
         self.stock_data=adj_value(si.get_data(stock_code+'.TW',  (date.today()- timedelta(days=30))).drop(['ticker'],axis=1).dropna())
