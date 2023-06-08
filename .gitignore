@@ -4,6 +4,7 @@
 ## Mode ###
 model/*
 jpg/*
+py37-venv/*
 
 ### macOS ###
 # General
