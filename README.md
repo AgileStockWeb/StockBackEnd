@@ -3,7 +3,7 @@
 - Python 3.7
 - Postgresql
 
-## Quick setup Flask
+## Quick setup Flask Api
 Install python venv and python3.7
 ```bash
 sudo apt install python3.7 python3-venv python3.7-venv
