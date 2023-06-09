@@ -61,6 +61,7 @@ CREATE TABLE model_table (model_id TEXT PRIMARY KEY NOT NULL,
 						end_time TIMESTAMP NOT NULL,
 						stock_code TEXT NOT NULL,
 						technical_indicator TEXT NOT NULL,
+						model_type TEXT NOT NULL,
 						model_path TEXT,
 						CONSTRAINT start_end_check CHECK (start_time < end_time));
  
